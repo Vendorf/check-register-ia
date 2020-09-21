@@ -1,0 +1,59 @@
+.container{
+    height:100vh;
+    width:100vw;
+    display: flex;
+    flex-direction: row;
+}
+
+.sidebar{
+    flex: 2;
+    background-color: rgb(32,35,42);
+}
+
+.main{
+    flex: 8;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-view{
+    flex: 65;
+    display: flex;
+    flex-direction: row;
+    overflow-y: auto;
+    background-color: #282c34;
+}
+
+.check-table{
+    flex: 1;
+    background-color: transparent;
+}
+
+.summary-view{
+    flex: 35;
+    display: flex;
+    flex-direction: column;
+}
+
+.summary{
+    background-color: rgb(50,54,62);
+    flex: 1;
+    color: rgba(255,255,255, 0.7);
+}
+
+/* ----- */
+button{
+    background-color: #282c34;
+    border: none;
+    color: #2f3031;
+    font-weight: bolder;
+    transition: 0.3s
+}
+button:hover{
+    background-color: red;
+    /* padding: 8px; */
+    transition: 0.3s;
+}
+button:focus{
+    outline: none;
+}

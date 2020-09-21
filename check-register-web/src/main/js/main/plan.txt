@@ -1,0 +1,27 @@
+[A: Removed getSummary as independent]
+In CheckTableComponent, currently am retrieving summary separately from the CheckTableComponent
+
+This is okay to leave as there might be a use case for getting summary independently, but there isn't really
+a reason to just get the checks without getting the summary
+
+It would be better to add a tag that you send to the server to Suppress Summary if there ever is a need for it,
+and in the CheckBook.java class there will be a way to build without the summary so that it simply sends with checks
+and null for summary
+
+This will help simplify code but more importantly cuts the number of DB calls in half as don't have to separately retrieve the
+checks for sending the checks and then separately for calculating the summary to send it
+[--------------------
+
+[B: CheckRow editing fix]
+So editing isn't retarded on slow connection, should change it to suppress sending unless the input is not in focus, and only then
+does it send and update with the websocket response; until then just set the whole state with the value from the input
+
+
+
+wait nvm, probably because of null on this:
+yup it was null, now Builder.Default on transactionName and memo is empty string "" and it renders properly:
+because there is no change from initial to final state, react doesn't re-render and so the application is still functional
+but once there are different responses it will actually work correctly
+
+this is if anything actually really nice and working as intended I'm sure, as it would prevent clearing if it took a while for
+something to change, so it wouldn't just delete

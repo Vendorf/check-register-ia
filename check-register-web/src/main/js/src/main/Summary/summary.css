@@ -1,0 +1,15 @@
+input {
+    border: none !important;
+    border-color: transparent !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    /* flex-grow: 1; */
+    flex: 1;
+    height: 27px;
+    color: white;
+}
+
+input:focus{
+    outline: none;
+}

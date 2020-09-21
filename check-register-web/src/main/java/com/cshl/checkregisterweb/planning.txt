@@ -1,0 +1,41 @@
+front end:
+
+subscriber model for updating UI
+have globalRefreshEvent which all subscribe to to force unilateral refresh (ex: changing users or some other major change
+where everything should update just in case or by necessity)
+
+userChange should probably cause a hard reload of everything honestly; perhaps cause a global reset of all UI
+    for now, just not going to worry about it until multiple users become a reality then can update code to fit that paradigm
+
+
+RibbonComponent
+    globalRefreshEvent
+
+AccountViewComponent
+    globalRefreshEvent
+    accountCreateEvent
+    accountUpdateEvent
+    accountDeleteEvent
+    userChangeEvent
+    -->all refresh
+
+CheckAccountViewComponent
+    globalRefreshEvent
+    accountCreateEvent
+    accountUpdateEvent
+    accountDeleteEvent
+    userChangeEvent
+    -->all refresh
+
+CheckTableComponent
+    accountUpdateEvent
+    userChangeEvent
+    -->all refresh
+
+SummaryComponent
+    globalRefreshEvent
+    accountUpdateEvent
+    accountCreateEvent
+    accountDeleteEvent
+    userChangeEvent
+    -->all refresh

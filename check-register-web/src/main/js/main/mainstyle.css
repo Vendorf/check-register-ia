@@ -1,0 +1,121 @@
+.container{
+    height:100vh;
+    width:100vw;
+    display: flex;
+    flex-direction: row;
+}
+
+.sidebar{
+    flex: 2;
+    background-color: rgb(32,35,42);
+}
+
+.main{
+    flex: 8;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-view{
+    flex: 65;
+    display: flex;
+    flex-direction: row;
+    overflow-y: auto;
+    background-color: #282c34;
+}
+
+.check-table{
+    flex: 1;
+    background-color: transparent;
+    /* background-color: lightblue; */
+}
+
+.summary-view{
+    flex: 35;
+    display: flex;
+    flex-direction: column;
+}
+
+.summary{
+    background-color: rgb(50,54,62);
+    flex: 1;
+}
+
+/* kjklasjdklfasd */
+
+button{
+    background-color: #61dafb;
+    border: none;
+    padding: 15px 32px;
+    border-radius: 30px;
+    color: #2f3031;
+    font-weight: bolder;
+    transition: 0.3s
+}
+button:hover{
+    background-color: white;
+    transition: 0.3s;
+}
+
+/* akjsdfjklasdf */
+
+.split-pane{
+    display: flex;
+    flex-flow: column;
+    flex: 1;
+}
+
+.split-pane-top{
+    flex: 65;
+    display: flex;
+}
+
+.split-pane-bottom{
+    flex: 35;
+    display: flex;
+}
+
+.separator{
+    border: 2px solid #61dafb;    
+    cursor: row-resize;
+    user-select: none;
+    transition: 0.2s;
+}
+
+.separator:hover{
+    border: 2px solid white;
+    transition: 0.2s;
+}
+
+/* .main{
+    background-color: lightgrey;
+    display: flex;
+    flex-flow: column;
+    height: 100vh;
+}
+
+.summary{
+    background-color: teal;
+    flex-grow: 1;
+} */
+
+
+.temp{
+    display: flex;
+    /* background-color: teal; */
+}
+
+.temp2{
+    flex-grow: 1;
+}
+
+.temp-drawer{
+    width: 240;
+    flex-shrink: 0;
+    background-color: tomato;
+}
+
+.temp-content{
+    flex-grow: 1;
+    background-color: gray;
+}

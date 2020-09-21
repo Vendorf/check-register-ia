@@ -1,0 +1,106 @@
+[A: Removed getSummary as independent]
+In CheckTableComponent, currently am retrieving summary separately from the CheckTableComponent
+
+This is okay to leave as there might be a use case for getting summary independently, but there isn't really
+a reason to just get the checks without getting the summary
+
+It would be better to add a tag that you send to the server to Suppress Summary if there ever is a need for it,
+and in the CheckBook.java class there will be a way to build without the summary so that it simply sends with checks
+and null for summary
+
+This will help simplify code but more importantly cuts the number of DB calls in half as don't have to separately retrieve the
+checks for sending the checks and then separately for calculating the summary to send it
+[--------------------
+
+[B: CheckRow editing fix]
+So editing isn't retarded on slow connection, should change it to suppress sending unless the input is not in focus, and only then
+does it send and update with the websocket response; until then just set the whole state with the value from the input
+
+See [E] for editing flag; that will need to happen regardless due to sluggishness of websocket, so likely don't need this fix
+[--------------------
+
+[C: Remove XHR]
+Why use XHR when we have websockets? Just send data over the websocket took
+Configure it like in this post: https://stackoverflow.com/questions/49689352/spring-websocket-notifying-subscribers-is-not-working
+[--------------------
+
+[D: remove @HandleAfterXYZ]
+Because I'm not doing REST calls directly to the respository, these annotations do nothing as the events are never being fired
+by the repo; they get fired by rest calls, not by the actual save/update/delete operations on the database
+
+Therefore, they can be removed. I didn't remove them for now because they are nice as an annotation to describe operation, in that
+they are intended to function as would be expected with the @HandleAfterXYZ with a standard REST direct to database implementation,
+but I should get rid of them before submitting to IB because it will show that those methods are not annotated and having Spring do
+special BS to them
+[--------------------
+
+[E: Editing Flag]
+Have flag for when editing is happening, and an interval function
+That interval function checks the flag and compared against previous editing condition (stored in react component state(?))
+If went from true -> true, then send data and keep executing at the interval
+If went from true -> false, send final updated data and then stop the function
+The function is started whenever editing begins:
+    At handleEdit, goes to startInterval function
+    startInterval checks if the previous editing state was false. If so, starts the interval function
+    if not, then the interval function is already running and startInterval does nothing
+    startInterval itself also keeps track of an 'editing' timer
+    whenever it gets called, it resets the timer; therefore, once somebody stops editing, the 'editing' condition
+    runs for a couple more seconds before switching; therefore, a momentary lapse in editing does not immediately
+    change the flag
+The websocket events are all received, but the refresh is only allowed to go through if the editing state is false
+
+To allow multiple editing, should have a system in which there are refs set by id, and when editing there is an editing
+flag and the id of the check being edited (and so the ref to it as well); therefore, whenver an update event
+comes in over the wire, can have it setState where check !== editingId; therefore other things can update but not the
+check being edited, preventing interruption
+    Actually, don't even need the ref then
+
+For the 'event/newCheck,' need to check whether it was the user who created the new check by seeing if they are editing the
+last check (id is null); if so, then:
+    refreshChecksWithNew(fromServer)
+        --> setState((prevState) => {
+            let newChecks = map...
+                if(prevCheck.id == null)
+                    {...prevCheck}
+                else
+                    {...fromServer}
+        })
+This is so that the editing isn't borked by the websocket
+[--------------------
+
+[F: internal id]
+Should have an internal id for the checks being displayed rather than use their database id, because the database id
+is not necessarily going to increment regularly so should have an internal one that is regular
+
+Not sure best way to implement to prevent refresh issues, especially considering new check creation
+Maybe have the id actually be part of the serverside model as well (although not in db)
+Maybe every time state is set do a map on the checks from the previous state and set all new fields with ...result.check
+That will preserve the internalId variable in the check
+At the same time in that mapping, can have index with intervalId, and wherever there isn't an interval id, set it as the index+1
+[--------------------
+
+[G: websocket editing]
+will want to rewrite editing system to have the id of the currently edited item,
+and do a refresh on everything except that item when a websocket call comes in
+still want to keep the refresh in intervalPost for when all editing done, to refresh that last
+item as well
+[--------------------
+
+[H: elevate REST]
+Might need to elevate the POST (intervalPost and editedChecks) with methods passed from above with props
+So there will be a method addEditedCheck and editedChecks will be stored above, and intervalPost will be above
+operating on those checks, then using the reference to the React component to do refreshChecksWithNew
+
+This is so that the POST still happens if you edit and then navigate away (ex: to reports)
+
+Alternatively, can just force a POST if updatedComponents is not empty in a dismount (componentWillUnmount, I think)
+
+
+//-------------------
+wait nvm, probably because of null on this:
+yup it was null, now Builder.Default on transactionName and memo is empty string "" and it renders properly:
+because there is no change from initial to final state, react doesn't re-render and so the application is still functional
+but once there are different responses it will actually work correctly
+
+this is if anything actually really nice and working as intended I'm sure, as it would prevent clearing if it took a while for
+something to change, so it wouldn't just delete
